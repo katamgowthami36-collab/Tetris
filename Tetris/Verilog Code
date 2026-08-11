@@ -1,0 +1,52 @@
+module tetris_game (
+    input        clk,
+    input        reset,
+    input        move_left,
+    input        move_right,
+    input        drop,
+
+    output reg [3:0] block_x,
+    output reg [4:0] block_y,
+    output reg       game_over
+);
+
+    parameter GRID_WIDTH  = 10;
+    parameter GRID_HEIGHT = 20;
+
+    always @(posedge clk) begin
+
+        if (reset) begin
+            block_x  <= 4'd5;
+            block_y  <= 5'd0;
+            game_over <= 1'b0;
+        end
+
+        else if (!game_over) begin
+
+            // Move block left
+            if (move_left && block_x > 0)
+                block_x <= block_x - 1'b1;
+
+            // Move block right
+            else if (move_right && block_x < GRID_WIDTH - 1)
+                block_x <= block_x + 1'b1;
+
+            // Move block downward
+            if (drop) begin
+                if (block_y < GRID_HEIGHT - 1)
+                    block_y <= block_y + 1'b1;
+                else
+                    game_over <= 1'b1;
+            end
+
+            // Automatic falling
+            else begin
+                if (block_y < GRID_HEIGHT - 1)
+                    block_y <= block_y + 1'b1;
+                else
+                    game_over <= 1'b1;
+            end
+        end
+    end
+
+endmodule
